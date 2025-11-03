@@ -20,6 +20,12 @@ const routes = [
         meta: { title: '双色球走势' }
       },
       {
+        path: '/shuangseqiu/recommend',
+        name: 'ShuangseqiuRecommend',
+        component: () => import('@/views/ShuangseqiuRecommend.vue'),
+        meta: { title: '双色球号码推荐' }
+      },
+      {
         path: '/daletou',
         name: 'Daletou',
         component: () => import('@/views/Daletou.vue'),
@@ -30,6 +36,12 @@ const routes = [
         name: 'DaletouTrend',
         component: () => import('@/views/DaletouTrend.vue'),
         meta: { title: '大乐透走势' }
+      },
+      {
+        path: '/daletou/recommend',
+        name: 'DaletouRecommend',
+        component: () => import('@/views/DaletouRecommend.vue'),
+        meta: { title: '大乐透号码推荐' }
       }
     ]
   }

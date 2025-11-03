@@ -25,6 +25,10 @@
               <el-icon><TrendCharts /></el-icon>
               走势图
             </el-menu-item>
+            <el-menu-item index="/shuangseqiu/recommend">
+              <el-icon><MagicStick /></el-icon>
+              号码推荐
+            </el-menu-item>
           </el-sub-menu>
           
           <el-sub-menu index="daletou">
@@ -39,6 +43,10 @@
             <el-menu-item index="/daletou/trend">
               <el-icon><TrendCharts /></el-icon>
               走势图
+            </el-menu-item>
+            <el-menu-item index="/daletou/recommend">
+              <el-icon><MagicStick /></el-icon>
+              号码推荐
             </el-menu-item>
           </el-sub-menu>
         </el-menu>

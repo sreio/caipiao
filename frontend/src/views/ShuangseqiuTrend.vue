@@ -59,11 +59,6 @@
                     {{ String(num).padStart(2, '0') }}
                   </span>
                   <span v-else class="empty-mark">{{ num }}</span>
-                  <!-- 连接线 -->
-                  <svg v-if="rowIndex < tableData.length - 1 && hasConnection(rowIndex, num, 'red')" 
-                       class="connect-line" viewBox="0 0 2 40">
-                    <line x1="1" y1="0" x2="1" y2="40" stroke="#f56c6c" stroke-width="2"/>
-                  </svg>
                 </div>
               </td>
               
@@ -74,11 +69,6 @@
                     {{ String(num).padStart(2, '0') }}
                   </span>
                   <span v-else class="empty-mark">{{ num }}</span>
-                  <!-- 连接线 -->
-                  <svg v-if="rowIndex < tableData.length - 1 && hasConnection(rowIndex, num, 'blue')" 
-                       class="connect-line" viewBox="0 0 2 40">
-                    <line x1="1" y1="0" x2="1" y2="40" stroke="#409eff" stroke-width="2"/>
-                  </svg>
                 </div>
               </td>
             </tr>
@@ -290,8 +280,15 @@ const getMissingTagType = (missing) => {
 // 格式化日期
 const formatDate = (dateStr) => {
   if (!dateStr) return ''
-  const date = new Date(dateStr)
-  return `${date.getMonth() + 1}-${date.getDate()}`
+  try {
+    const date = new Date(dateStr)
+    if (isNaN(date.getTime())) return ''
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${month}-${day}`
+  } catch {
+    return ''
+  }
 }
 
 // 判断是否有连接线
@@ -482,15 +479,23 @@ onUnmounted(() => {
 
 .trend-table-wrapper {
   overflow-x: auto;
-  max-height: 800px;
   overflow-y: auto;
+  max-height: 800px;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
 }
 
 .trend-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 12px;
   min-width: 1200px;
+  table-layout: fixed;
+}
+
+.trend-table tbody {
+  position: relative;
 }
 
 .trend-table thead {
@@ -498,6 +503,27 @@ onUnmounted(() => {
   top: 0;
   z-index: 10;
   background: #fff;
+}
+
+.trend-table thead th {
+  position: relative;
+  background: #fff;
+}
+
+/* 表头的期号和日期列固定在左侧 */
+.trend-table thead .period-col,
+.trend-table thead .date-col {
+  position: sticky;
+  background: #fff;
+  z-index: 12;
+}
+
+.trend-table thead .period-col {
+  left: 0;
+}
+
+.trend-table thead .date-col {
+  left: 90px;
 }
 
 .number-group-header {
@@ -530,18 +556,14 @@ onUnmounted(() => {
 }
 
 .period-col {
-  min-width: 80px;
-  position: sticky;
-  left: 0;
-  z-index: 11;
+  min-width: 90px;
+  width: 90px;
   background: #fff;
 }
 
 .date-col {
-  min-width: 60px;
-  position: sticky;
-  left: 80px;
-  z-index: 11;
+  min-width: 90px;
+  width: 90px;
   background: #fff;
 }
 
@@ -570,7 +592,7 @@ onUnmounted(() => {
 }
 
 .period-cell {
-  padding: 4px;
+  padding: 4px 6px;
   text-align: center;
   font-weight: 600;
   font-size: 12px;
@@ -578,7 +600,11 @@ onUnmounted(() => {
   position: sticky;
   left: 0;
   background: #fff;
-  z-index: 1;
+  z-index: 5;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
+  min-width: 90px;
+  width: 90px;
+  white-space: nowrap;
 }
 
 .trend-row:hover .period-cell {
@@ -586,15 +612,21 @@ onUnmounted(() => {
 }
 
 .date-cell {
-  padding: 4px;
+  padding: 4px 6px;
   text-align: center;
-  font-size: 11px;
-  color: #909399;
+  font-size: 12px;
+  color: #606266;
   border: 1px solid #e4e7ed;
   position: sticky;
-  left: 80px;
+  left: 90px;
   background: #fff;
-  z-index: 1;
+  z-index: 5;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
+  min-width: 90px;
+  width: 90px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .trend-row:hover .date-cell {
@@ -609,14 +641,17 @@ onUnmounted(() => {
   position: relative;
   width: 28px;
   min-width: 28px;
+  vertical-align: middle;
 }
 
 .cell-content {
   position: relative;
   height: 100%;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: visible;
 }
 
 .ball-mark {
@@ -630,7 +665,8 @@ onUnmounted(() => {
   font-weight: 600;
   color: #fff;
   position: relative;
-  z-index: 2;
+  z-index: 3;
+  flex-shrink: 0;
 }
 
 .red-mark {
@@ -647,17 +683,26 @@ onUnmounted(() => {
   font-size: 10px;
   color: #dcdfe6;
   font-weight: normal;
+  position: relative;
+  z-index: 1;
 }
 
 .connect-line {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 0;
   transform: translateX(-50%);
   width: 2px;
   height: 40px;
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
+  overflow: visible;
+}
+
+.connect-line svg {
+  display: block;
+  width: 2px;
+  height: 40px;
 }
 
 /* 频率统计表格样式 */

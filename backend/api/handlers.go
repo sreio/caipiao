@@ -214,20 +214,41 @@ func (h *Handler) FetchShuangseqiuHistory(c *gin.Context) {
 		count = 100
 	}
 
-	result, err := h.lotteryService.FetchShuangseqiuHistory(count)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, Response{
-			Code: -1,
-			Msg:  "批量获取失败: " + err.Error(),
-		})
-		return
-	}
+	// 检查是否需要异步处理（数量大于100时）
+	asyncStr := c.DefaultQuery("async", "false")
+	async := asyncStr == "true" || count > 100
 
-	c.JSON(http.StatusOK, Response{
-		Code: 0,
-		Msg:  "批量获取完成",
-		Data: result,
-	})
+	if async {
+		// 异步处理
+		result, err := h.lotteryService.FetchShuangseqiuHistoryAsync(count)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, Response{
+				Code: -1,
+				Msg:  "创建任务失败: " + err.Error(),
+			})
+			return
+		}
+		c.JSON(http.StatusOK, Response{
+			Code: 0,
+			Msg:  "任务已创建，请通过任务ID查询进度",
+			Data: result,
+		})
+	} else {
+		// 同步处理（不传taskID）
+		result, err := h.lotteryService.FetchShuangseqiuHistory(count)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, Response{
+				Code: -1,
+				Msg:  "批量获取失败: " + err.Error(),
+			})
+			return
+		}
+		c.JSON(http.StatusOK, Response{
+			Code: 0,
+			Msg:  "批量获取完成",
+			Data: result,
+		})
+	}
 }
 
 // FetchDaletouHistory 批量获取大乐透历史数据
@@ -258,7 +279,7 @@ func (h *Handler) FetchDaletouHistory(c *gin.Context) {
 			Data: result,
 		})
 	} else {
-		// 同步处理
+		// 同步处理（不传taskID）
 		result, err := h.lotteryService.FetchDaletouHistory(count)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, Response{
@@ -278,10 +299,10 @@ func (h *Handler) FetchDaletouHistory(c *gin.Context) {
 // GetTask 获取任务状态
 func (h *Handler) GetTask(c *gin.Context) {
 	taskID := c.Param("id")
-	
+
 	tm := services.GetTaskManager()
 	task := tm.GetTask(taskID)
-	
+
 	if task == nil {
 		c.JSON(http.StatusNotFound, Response{
 			Code: -1,
@@ -289,7 +310,7 @@ func (h *Handler) GetTask(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, Response{
 		Code: 0,
 		Msg:  "success",
@@ -304,7 +325,7 @@ func (h *Handler) GetShuangseqiuTrend(c *gin.Context) {
 	if err != nil {
 		limit = 50
 	}
-	
+
 	trend, err := h.trendService.GetShuangseqiuTrend(limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, Response{
@@ -313,7 +334,7 @@ func (h *Handler) GetShuangseqiuTrend(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, Response{
 		Code: 0,
 		Msg:  "success",
@@ -328,7 +349,7 @@ func (h *Handler) GetDaletouTrend(c *gin.Context) {
 	if err != nil {
 		limit = 50
 	}
-	
+
 	trend, err := h.trendService.GetDaletouTrend(limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, Response{
@@ -337,11 +358,10 @@ func (h *Handler) GetDaletouTrend(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, Response{
 		Code: 0,
 		Msg:  "success",
 		Data: trend,
 	})
 }
-

@@ -24,10 +24,10 @@ type LotteryService struct {
 func NewLotteryService(shuangseqiuURL, daletouURL string) *LotteryService {
 	// 创建 Resty 客户端，模拟完整的浏览器请求
 	client := resty.New().
-		SetTimeout(30 * time.Second).
+		SetTimeout(30*time.Second).
 		SetRetryCount(3).
-		SetRetryWaitTime(2 * time.Second).          // 增加重试等待时间，避免被限流
-		SetRetryMaxWaitTime(10 * time.Second).
+		SetRetryWaitTime(2*time.Second). // 增加重试等待时间，避免被限流
+		SetRetryMaxWaitTime(10*time.Second).
 		SetHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36").
 		SetHeader("Accept", "application/json, text/plain, */*").
 		SetHeader("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8").
@@ -184,14 +184,14 @@ func (s *LotteryService) FetchShuangseqiu(issue string) (*models.Shuangseqiu, er
 	if idx := strings.Index(dateStr, "("); idx != -1 {
 		dateStr = strings.TrimSpace(dateStr[:idx])
 	}
-	
+
 	var drawDate time.Time
 	dateFormats := []string{
-		"2006-01-02",           // 2024-01-01
-		"2006-01-02 15:04:05",  // 2024-01-01 20:30:00
-		"20060102",             // 20240101
+		"2006-01-02",          // 2024-01-01
+		"2006-01-02 15:04:05", // 2024-01-01 20:30:00
+		"20060102",            // 20240101
 	}
-	
+
 	parsed := false
 	for _, format := range dateFormats {
 		if d, err := time.Parse(format, dateStr); err == nil {
@@ -200,7 +200,7 @@ func (s *LotteryService) FetchShuangseqiu(issue string) (*models.Shuangseqiu, er
 			break
 		}
 	}
-	
+
 	if !parsed {
 		log.Printf("解析日期失败: 原始='%s', 清理后='%s', 使用当前日期", result.Date, dateStr)
 		drawDate = time.Now().Truncate(24 * time.Hour) // 使用当前日期（不含时间）
@@ -256,7 +256,7 @@ func (s *LotteryService) FetchDaletou(issue string) (*models.Daletou, error) {
 		return nil, fmt.Errorf("API请求失败: HTTP %d", resp.StatusCode())
 	}
 
-	log.Printf("大乐透API响应: Success=%v, ErrorCode=%s, Message=%s, ListCount=%d", 
+	log.Printf("大乐透API响应: Success=%v, ErrorCode=%s, Message=%s, ListCount=%d",
 		apiResp.Success, apiResp.ErrorCode, apiResp.Message, len(apiResp.Value.List))
 
 	if !apiResp.Success {
@@ -269,7 +269,7 @@ func (s *LotteryService) FetchDaletou(issue string) (*models.Daletou, error) {
 
 	// 解析第一条结果
 	result := apiResp.Value.List[0]
-	log.Printf("大乐透数据: 期号=%s, 开奖结果=%s, 时间=%s", 
+	log.Printf("大乐透数据: 期号=%s, 开奖结果=%s, 时间=%s",
 		result.LotteryDrawNum, result.LotteryDrawResult, result.LotteryDrawTime)
 
 	// 解析开奖结果
@@ -277,14 +277,14 @@ func (s *LotteryService) FetchDaletou(issue string) (*models.Daletou, error) {
 	// 格式1: "01 02 03 04 05 # 01 02" (带#分隔符)
 	// 格式2: "01 02 03 04 05 06 07" (7个数字，前5个是前区，后2个是后区)
 	var frontBalls, backBalls []int
-	
+
 	if strings.Contains(result.LotteryDrawResult, "#") {
 		// 格式1: 带 # 分隔符
 		parts := strings.Split(result.LotteryDrawResult, "#")
 		if len(parts) != 2 {
 			return nil, fmt.Errorf("开奖结果格式错误: 期望包含#分隔符且分为2部分，实际值=%s", result.LotteryDrawResult)
 		}
-		
+
 		// 解析前区
 		for _, s := range strings.Fields(strings.TrimSpace(parts[0])) {
 			num, err := strconv.Atoi(s)
@@ -294,7 +294,7 @@ func (s *LotteryService) FetchDaletou(issue string) (*models.Daletou, error) {
 			}
 			frontBalls = append(frontBalls, num)
 		}
-		
+
 		// 解析后区
 		for _, s := range strings.Fields(strings.TrimSpace(parts[1])) {
 			num, err := strconv.Atoi(s)
@@ -315,13 +315,13 @@ func (s *LotteryService) FetchDaletou(issue string) (*models.Daletou, error) {
 			}
 			allBalls = append(allBalls, num)
 		}
-		
+
 		// 验证总数量
 		if len(allBalls) != 7 {
-			return nil, fmt.Errorf("开奖结果数量错误: 期望7个数字(前5+后2)，实际%d个 (原始数据: %s)", 
+			return nil, fmt.Errorf("开奖结果数量错误: 期望7个数字(前5+后2)，实际%d个 (原始数据: %s)",
 				len(allBalls), result.LotteryDrawResult)
 		}
-		
+
 		// 前5个是前区，后2个是后区
 		frontBalls = allBalls[:5]
 		backBalls = allBalls[5:]
@@ -340,7 +340,7 @@ func (s *LotteryService) FetchDaletou(issue string) (*models.Daletou, error) {
 
 	// 解析日期，支持多种格式
 	var drawDate time.Time
-	
+
 	// 尝试格式1: "2024-01-01 20:30:00"
 	drawDate, err = time.Parse("2006-01-02 15:04:05", result.LotteryDrawTime)
 	if err != nil {
@@ -371,7 +371,7 @@ func (s *LotteryService) FetchDaletou(issue string) (*models.Daletou, error) {
 // SaveShuangseqiu 保存双色球数据
 func (s *LotteryService) SaveShuangseqiu(ssq *models.Shuangseqiu) error {
 	db := database.GetDB()
-	
+
 	// 检查期号是否已存在
 	var existing models.Shuangseqiu
 	err := db.Where("issue = ?", ssq.Issue).First(&existing).Error
@@ -379,12 +379,12 @@ func (s *LotteryService) SaveShuangseqiu(ssq *models.Shuangseqiu) error {
 		// 记录已存在
 		return fmt.Errorf("期号 %s 的数据已存在", ssq.Issue)
 	}
-	
+
 	// 如果是其他错误（非记录不存在），返回错误
 	if err != gorm.ErrRecordNotFound {
 		return err
 	}
-	
+
 	// 保存新数据
 	return db.Create(ssq).Error
 }
@@ -392,7 +392,7 @@ func (s *LotteryService) SaveShuangseqiu(ssq *models.Shuangseqiu) error {
 // SaveDaletou 保存大乐透数据
 func (s *LotteryService) SaveDaletou(dlt *models.Daletou) error {
 	db := database.GetDB()
-	
+
 	// 检查期号是否已存在
 	var existing models.Daletou
 	err := db.Where("issue = ?", dlt.Issue).First(&existing).Error
@@ -400,23 +400,23 @@ func (s *LotteryService) SaveDaletou(dlt *models.Daletou) error {
 		// 记录已存在
 		return fmt.Errorf("期号 %s 的数据已存在", dlt.Issue)
 	}
-	
+
 	// 如果是其他错误（非记录不存在），返回错误
 	if err != gorm.ErrRecordNotFound {
 		return err
 	}
-	
+
 	// 保存新数据
 	return db.Create(dlt).Error
 }
 
 // BatchResult 批量获取结果
 type BatchResult struct {
-	Total   int    `json:"total"`    // 总数
-	Success int    `json:"success"`  // 成功
-	Skipped int    `json:"skipped"`  // 跳过（已存在）
-	Failed  int    `json:"failed"`   // 失败
-	TaskID  string `json:"task_id"`  // 任务ID（异步时使用）
+	Total   int    `json:"total"`   // 总数
+	Success int    `json:"success"` // 成功
+	Skipped int    `json:"skipped"` // 跳过（已存在）
+	Failed  int    `json:"failed"`  // 失败
+	TaskID  string `json:"task_id"` // 任务ID（异步时使用）
 }
 
 // GetLatestIssue 获取数据库中最新的期号
@@ -454,12 +454,18 @@ func (s *LotteryService) FetchShuangseqiuHistoryAsync(count int) (*BatchResult, 
 	// 创建任务
 	tm := GetTaskManager()
 	task := tm.CreateTask("shuangseqiu")
-	
+
+	// 初始化任务状态
+	tm.UpdateTask(task.ID, func(t *TaskInfo) {
+		t.Status = TaskStatusRunning
+		t.Total = count
+	})
+
 	// 异步执行
 	go func() {
-		result, err := s.FetchShuangseqiuHistory(count)
+		result, err := s.FetchShuangseqiuHistory(count, task.ID)
 		endTime := time.Now()
-		
+
 		tm.UpdateTask(task.ID, func(t *TaskInfo) {
 			t.EndTime = &endTime
 			if err != nil {
@@ -475,14 +481,15 @@ func (s *LotteryService) FetchShuangseqiuHistoryAsync(count int) (*BatchResult, 
 			}
 		})
 	}()
-	
+
 	return &BatchResult{
 		TaskID: task.ID,
 	}, nil
 }
 
 // FetchShuangseqiuHistory 批量获取双色球历史数据
-func (s *LotteryService) FetchShuangseqiuHistory(count int) (*BatchResult, error) {
+// taskID 可选，如果提供则实时更新任务进度
+func (s *LotteryService) FetchShuangseqiuHistory(count int, taskID ...string) (*BatchResult, error) {
 	if count <= 0 {
 		count = 100 // 默认获取100期
 	}
@@ -567,14 +574,14 @@ func (s *LotteryService) FetchShuangseqiuHistory(count int) (*BatchResult, error
 		if idx := strings.Index(dateStr, "("); idx != -1 {
 			dateStr = strings.TrimSpace(dateStr[:idx])
 		}
-		
+
 		var drawDate time.Time
 		dateFormats := []string{
-			"2006-01-02",           // 2024-01-01
-			"2006-01-02 15:04:05",  // 2024-01-01 20:30:00
-			"20060102",             // 20240101
+			"2006-01-02",          // 2024-01-01
+			"2006-01-02 15:04:05", // 2024-01-01 20:30:00
+			"20060102",            // 20240101
 		}
-		
+
 		parsed := false
 		for _, format := range dateFormats {
 			if d, err := time.Parse(format, dateStr); err == nil {
@@ -583,7 +590,7 @@ func (s *LotteryService) FetchShuangseqiuHistory(count int) (*BatchResult, error
 				break
 			}
 		}
-		
+
 		if !parsed {
 			log.Printf("期号 %s: 解析日期失败: 原始='%s', 清理后='%s'", item.Code, item.Date, dateStr)
 			// 使用当前日期（不含时间）
@@ -613,6 +620,21 @@ func (s *LotteryService) FetchShuangseqiuHistory(count int) (*BatchResult, error
 		} else {
 			result.Success++
 		}
+
+		// 如果有任务ID，实时更新任务进度
+		if len(taskID) > 0 && taskID[0] != "" {
+			tm := GetTaskManager()
+			tm.UpdateTask(taskID[0], func(t *TaskInfo) {
+				t.Success = result.Success
+				t.Skipped = result.Skipped
+				t.Failed = result.Failed
+				// 计算进度
+				processed := result.Success + result.Skipped + result.Failed
+				if t.Total > 0 {
+					t.Progress = int(float64(processed) / float64(t.Total) * 100)
+				}
+			})
+		}
 	}
 
 	log.Printf("双色球批量获取完成: 总计=%d, 成功=%d, 跳过=%d, 失败=%d",
@@ -626,12 +648,18 @@ func (s *LotteryService) FetchDaletouHistoryAsync(count int) (*BatchResult, erro
 	// 创建任务
 	tm := GetTaskManager()
 	task := tm.CreateTask("daletou")
-	
+
+	// 初始化任务状态
+	tm.UpdateTask(task.ID, func(t *TaskInfo) {
+		t.Status = TaskStatusRunning
+		t.Total = count
+	})
+
 	// 异步执行
 	go func() {
-		result, err := s.FetchDaletouHistory(count)
+		result, err := s.FetchDaletouHistory(count, task.ID)
 		endTime := time.Now()
-		
+
 		tm.UpdateTask(task.ID, func(t *TaskInfo) {
 			t.EndTime = &endTime
 			if err != nil {
@@ -647,14 +675,15 @@ func (s *LotteryService) FetchDaletouHistoryAsync(count int) (*BatchResult, erro
 			}
 		})
 	}()
-	
+
 	return &BatchResult{
 		TaskID: task.ID,
 	}, nil
 }
 
 // FetchDaletouHistory 批量获取大乐透历史数据
-func (s *LotteryService) FetchDaletouHistory(count int) (*BatchResult, error) {
+// taskID 可选，如果提供则实时更新任务进度
+func (s *LotteryService) FetchDaletouHistory(count int, taskID ...string) (*BatchResult, error) {
 	if count <= 0 {
 		count = 100 // 默认获取100期
 	}
@@ -703,11 +732,11 @@ func (s *LotteryService) FetchDaletouHistory(count int) (*BatchResult, error) {
 			continue
 		}
 
-		log.Printf("大乐透批量API响应(第%d页): Success=%v, ErrorCode=%s, ListCount=%d", 
+		log.Printf("大乐透批量API响应(第%d页): Success=%v, ErrorCode=%s, ListCount=%d",
 			page, apiResp.Success, apiResp.ErrorCode, len(apiResp.Value.List))
 
 		if !apiResp.Success || len(apiResp.Value.List) == 0 {
-			log.Printf("大乐透批量API第%d页无数据 (Success=%v, ErrorCode=%s, Message=%s)", 
+			log.Printf("大乐透批量API第%d页无数据 (Success=%v, ErrorCode=%s, Message=%s)",
 				page, apiResp.Success, apiResp.ErrorCode, apiResp.Message)
 			break
 		}
@@ -797,6 +826,21 @@ func (s *LotteryService) FetchDaletouHistory(count int) (*BatchResult, error) {
 				}
 			} else {
 				result.Success++
+			}
+
+			// 如果有任务ID，实时更新任务进度
+			if len(taskID) > 0 && taskID[0] != "" {
+				tm := GetTaskManager()
+				tm.UpdateTask(taskID[0], func(t *TaskInfo) {
+					t.Success = result.Success
+					t.Skipped = result.Skipped
+					t.Failed = result.Failed
+					// 计算进度
+					processed := result.Success + result.Skipped + result.Failed
+					if t.Total > 0 {
+						t.Progress = int(float64(processed) / float64(t.Total) * 100)
+					}
+				})
 			}
 		}
 
