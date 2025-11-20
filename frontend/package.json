@@ -16,10 +16,12 @@
     "html2canvas": "^1.4.1",
     "pinia": "^2.1.7",
     "vue": "^3.4.0",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "vue-virtual-scroller": "^2.0.0-beta.8"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.0",
-    "vite": "^5.0.0"
+    "vite": "^5.0.0",
+    "vite-plugin-pwa": "^0.17.0"
   }
 }

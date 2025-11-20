@@ -1,0 +1,24 @@
+{
+    "$schema": "https://wails.io/schemas/config.v2.json",
+    "name": "caipiao",
+    "outputfilename": "彩票助手",
+    "frontend:install": "cd frontend && npm install",
+    "frontend:build": "cd frontend && npm run build",
+    "frontend:dev:watcher": "cd frontend && npm run dev",
+    "frontend:dev:serverUrl": "auto",
+    "wailsjsdir": "./frontend",
+    "assetdir": "./frontend/dist",
+    "reloaddirs": "backend",
+    "build:dir": "build",
+    "author": {
+        "name": "Caipiao Team",
+        "email": "team@caipiao.com"
+    },
+    "info": {
+        "companyName": "Caipiao",
+        "productName": "彩票数据管理系统",
+        "productVersion": "1.0.0",
+        "copyright": "Copyright © 2024 Caipiao Team",
+        "comments": "双色球和大乐透数据管理、统计和智能推荐系统"
+    }
+}

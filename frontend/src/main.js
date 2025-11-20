@@ -5,6 +5,8 @@ import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import VueVirtualScroller from 'vue-virtual-scroller'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import App from './App.vue'
 import router from './router'
 
@@ -21,6 +23,6 @@ app.use(router)
 app.use(ElementPlus, {
   locale: zhCn,
 })
+app.use(VueVirtualScroller)
 
 app.mount('#app')
-

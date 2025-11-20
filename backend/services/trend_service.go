@@ -1,8 +1,8 @@
 package services
 
 import (
-	"caipiao/backend/database"
-	"caipiao/backend/models"
+	"caipiao/database"
+	"caipiao/models"
 )
 
 // TrendService 走势图服务

@@ -1,55 +1,66 @@
 package main
 
 import (
-	"caipiao/backend/api"
-	"caipiao/backend/config"
-	"caipiao/backend/database"
-	"caipiao/backend/services"
+	"embed"
 	"log"
 
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
+	"github.com/wailsapp/wails/v2"
+	"github.com/wailsapp/wails/v2/pkg/options"
+	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/mac"
+	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
+//go:embed all:frontend/dist
+var assets embed.FS
+
 func main() {
-	// 加载配置
-	cfg := config.GetConfig()
+	// 创建应用实例
+	app := NewApp()
 
-	// 初始化数据库
-	if err := database.InitDB(cfg.Database.Path); err != nil {
-		log.Fatalf("数据库初始化失败: %v", err)
-	}
+	// 创建Wails应用
+	err := wails.Run(&options.App{
+		Title:  "彩票数据管理系统",
+		Width:  1280,
+		Height: 800,
+		MinWidth:  1024,
+		MinHeight: 768,
+		AssetServer: &assetserver.Options{
+			Assets: assets,
+		},
+		BackgroundColour: &options.RGBA{R: 255, G: 255, B: 255, A: 255},
+		OnStartup:        app.Startup,
+		OnShutdown:       app.Shutdown,
+		Bind: []interface{}{
+			app,
+		},
+		Windows: &windows.Options{
+			WebviewIsTransparent: false,
+			WindowIsTranslucent:  false,
+			DisableWindowIcon:    false,
+			Theme:                windows.SystemDefault,
+		},
+		Mac: &mac.Options{
+			TitleBar: &mac.TitleBar{
+				TitlebarAppearsTransparent: false,
+				HideTitle:                  false,
+				HideTitleBar:               false,
+				FullSizeContent:            false,
+				UseToolbar:                 false,
+				HideToolbarSeparator:       true,
+			},
+			Appearance:           mac.NSAppearanceNameAqua,
+			WebviewIsTransparent: false,
+			WindowIsTranslucent:  false,
+			About: &mac.AboutInfo{
+				Title:   "彩票数据管理系统",
+				Message: "双色球和大乐透数据管理、统计和智能推荐系统\n\nVersion 1.0.0\nCopyright © 2024 Caipiao Team",
+				Icon:    nil,
+			},
+		},
+	})
 
-	// 设置Gin模式
-	gin.SetMode(cfg.Server.Mode)
-
-	// 创建Gin引擎
-	r := gin.Default()
-
-	// 配置CORS
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:3000"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-	}))
-
-	// 创建服务
-	lotteryService := services.NewLotteryService(cfg.API.ShuangseqiuURL, cfg.API.DaletouURL)
-	trendService := services.NewTrendService()
-
-	// 创建处理器
-	handler := api.NewHandler(lotteryService, trendService)
-
-	// 设置路由
-	api.SetupRoutes(r, handler)
-
-	// 启动服务器
-	addr := ":" + cfg.Server.Port
-	log.Printf("服务器启动在 http://localhost%s", addr)
-	if err := r.Run(addr); err != nil {
-		log.Fatalf("服务器启动失败: %v", err)
+	if err != nil {
+		log.Fatal("启动应用失败:", err)
 	}
 }
-

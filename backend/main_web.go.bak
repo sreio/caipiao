@@ -1,0 +1,62 @@
+package main
+
+import (
+	"caipiao/backend/api"
+	"caipiao/backend/config"
+	"caipiao/backend/database"
+	"caipiao/backend/middleware"
+	"caipiao/backend/services"
+	"log"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+)
+
+func main() {
+	// 加载配置
+	cfg := config.GetConfig()
+
+	// 初始化数据库
+	if err := database.InitDB(cfg.Database.Path); err != nil {
+		log.Fatalf("数据库初始化失败: %v", err)
+	}
+
+	// 设置Gin模式
+	gin.SetMode(cfg.Server.Mode)
+
+	// 创建Gin引擎
+	r := gin.Default()
+
+	// 配置CORS
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
+
+	// 添加限流中间件（全局限流：每秒2个请求，突发容量5）
+	r.Use(middleware.DefaultRateLimitMiddleware())
+	log.Println("已启用API限流保护：每秒最多2个请求，突发容量5")
+
+	// 创建服务
+	lotteryService := services.NewLotteryService(cfg.API.ShuangseqiuURL, cfg.API.DaletouURL)
+	trendService := services.NewTrendService()
+	cacheService := services.NewCacheService()
+	recommendService := services.NewRecommendService()
+
+	// 创建处理器
+	handler := api.NewHandler(lotteryService, trendService, cacheService, recommendService)
+
+	// 设置路由
+	api.SetupRoutes(r, handler)
+
+	// 启动服务器
+	addr := ":" + cfg.Server.Port
+	log.Printf("服务器启动在 http://localhost%s", addr)
+	if err := r.Run(addr); err != nil {
+		log.Fatalf("服务器启动失败: %v", err)
+	}
+}
+

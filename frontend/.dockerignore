@@ -1,0 +1,9 @@
+# 忽略依赖目录
+node_modules/
+
+# 忽略构建产物
+dist/
+
+# 忽略开发文件
+.env
+.env.local

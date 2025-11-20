@@ -1,0 +1,14 @@
+# 忽略数据文件
+data/
+*.db
+
+# 忽略日志
+*.log
+
+# 忽略二进制文件
+lottery-server
+caipiao
+
+# 忽略临时文件
+*.tmp
+*.swp

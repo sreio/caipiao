@@ -1,7 +1,8 @@
 package api
 
 import (
-	"caipiao/backend/services"
+	"caipiao/services"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -11,15 +12,24 @@ import (
 
 // Handler API处理器
 type Handler struct {
-	lotteryService *services.LotteryService
-	trendService   *services.TrendService
+	lotteryService   *services.LotteryService
+	trendService     *services.TrendService
+	cacheService     *services.CacheService
+	recommendService *services.RecommendService
 }
 
 // NewHandler 创建处理器实例
-func NewHandler(lotteryService *services.LotteryService, trendService *services.TrendService) *Handler {
+func NewHandler(
+	lotteryService *services.LotteryService,
+	trendService *services.TrendService,
+	cacheService *services.CacheService,
+	recommendService *services.RecommendService,
+) *Handler {
 	return &Handler{
-		lotteryService: lotteryService,
-		trendService:   trendService,
+		lotteryService:   lotteryService,
+		trendService:     trendService,
+		cacheService:     cacheService,
+		recommendService: recommendService,
 	}
 }
 
@@ -166,7 +176,7 @@ func (h *Handler) FetchDaletou(c *gin.Context) {
 	})
 }
 
-// GetShuangseqiuStatistics 获取双色球统计
+// GetShuangseqiuStatistics 获取双色球统计（支持缓存）
 func (h *Handler) GetShuangseqiuStatistics(c *gin.Context) {
 	ballType := c.DefaultQuery("type", "red") // red or blue
 
@@ -186,7 +196,7 @@ func (h *Handler) GetShuangseqiuStatistics(c *gin.Context) {
 	})
 }
 
-// GetDaletouStatistics 获取大乐透统计
+// GetDaletouStatistics 获取大乐透统计（支持缓存）
 func (h *Handler) GetDaletouStatistics(c *gin.Context) {
 	ballType := c.DefaultQuery("type", "front") // front or back
 
@@ -361,7 +371,47 @@ func (h *Handler) GetDaletouTrend(c *gin.Context) {
 
 	c.JSON(http.StatusOK, Response{
 		Code: 0,
-		Msg:  "success",
+		Msg:  "获取走势数据成功",
 		Data: trend,
+	})
+}
+
+// GetShuangseqiuRecommendation 获取双色球智能推荐
+func (h *Handler) GetShuangseqiuRecommendation(c *gin.Context) {
+	count, _ := strconv.Atoi(c.DefaultQuery("count", "5"))
+
+	recommendations, err := h.recommendService.GenerateShuangseqiuRecommendation(count)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, Response{
+			Code: -1,
+			Msg:  fmt.Sprintf("生成推荐失败: %v", err),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, Response{
+		Code: 0,
+		Msg:  "获取推荐成功",
+		Data: recommendations,
+	})
+}
+
+// GetDaletouRecommendation 获取大乐透智能推荐
+func (h *Handler) GetDaletouRecommendation(c *gin.Context) {
+	count, _ := strconv.Atoi(c.DefaultQuery("count", "5"))
+
+	recommendations, err := h.recommendService.GenerateDaletouRecommendation(count)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, Response{
+			Code: -1,
+			Msg:  fmt.Sprintf("生成推荐失败: %v", err),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, Response{
+		Code: 0,
+		Msg:  "获取推荐成功",
+		Data: recommendations,
 	})
 }

@@ -1,7 +1,7 @@
 package database
 
 import (
-	"caipiao/backend/models"
+	"caipiao/models"
 	"fmt"
 	"log"
 	"os"
@@ -40,7 +40,40 @@ func InitDB(dbPath string) error {
 		return fmt.Errorf("数据库迁移失败: %v", err)
 	}
 
+	// 创建性能优化索引
+	if err := createIndexes(db); err != nil {
+		return fmt.Errorf("创建索引失败: %v", err)
+	}
+
 	log.Println("数据库初始化成功")
+	return nil
+}
+
+// createIndexes 创建性能优化索引
+func createIndexes(db *gorm.DB) error {
+	log.Println("开始创建性能优化索引...")
+
+	// 双色球表索引
+	indexes := []string{
+		// 开奖日期索引（倒序，常用于列表查询）
+		"CREATE INDEX IF NOT EXISTS idx_ssq_draw_date ON shuangseqiu(draw_date DESC)",
+		// 创建时间索引
+		"CREATE INDEX IF NOT EXISTS idx_ssq_created_at ON shuangseqiu(created_at DESC)",
+		
+		// 大乐透表索引
+		// 开奖日期索引（倒序，常用于列表查询）
+		"CREATE INDEX IF NOT EXISTS idx_dlt_draw_date ON daletou(draw_date DESC)",
+		// 创建时间索引
+		"CREATE INDEX IF NOT EXISTS idx_dlt_created_at ON daletou(created_at DESC)",
+	}
+
+	for _, sql := range indexes {
+		if err := db.Exec(sql).Error; err != nil {
+			return fmt.Errorf("执行索引创建失败 [%s]: %v", sql, err)
+		}
+	}
+
+	log.Println("性能优化索引创建完成")
 	return nil
 }
 

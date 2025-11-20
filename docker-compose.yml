@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # Redis缓存服务
+  redis:
+    image: redis:7-alpine
+    container_name: lottery-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - lottery-network
+    restart: unless-stopped
+
+  # 后端服务
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: lottery-backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend/data:/root/data
+    environment:
+      - GIN_MODE=release
+      - REDIS_HOST=redis:6379
+    depends_on:
+      - redis
+    networks:
+      - lottery-network
+    restart: unless-stopped
+
+  # 前端服务
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: lottery-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - lottery-network
+    restart: unless-stopped
+
+networks:
+  lottery-network:
+    driver: bridge
+
+volumes:
+  redis-data:

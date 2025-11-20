@@ -17,6 +17,7 @@ func SetupRoutes(r *gin.Engine, handler *Handler) {
 			ssq.POST("/fetch-history", handler.FetchShuangseqiuHistory) // 批量获取历史数据
 			ssq.GET("/statistics", handler.GetShuangseqiuStatistics) // 统计数据
 			ssq.GET("/trend", handler.GetShuangseqiuTrend)          // 走势图数据
+			ssq.GET("/recommend", handler.GetShuangseqiuRecommendation) // 智能推荐
 		}
 
 		// 大乐透相关路由
@@ -27,10 +28,10 @@ func SetupRoutes(r *gin.Engine, handler *Handler) {
 			dlt.POST("/fetch-history", handler.FetchDaletouHistory) // 批量获取历史数据
 			dlt.GET("/statistics", handler.GetDaletouStatistics) // 统计数据
 			dlt.GET("/trend", handler.GetDaletouTrend)          // 走势图数据
+			dlt.GET("/recommend", handler.GetDaletouRecommendation) // 智能推荐
 		}
 
 		// 任务相关路由
 		api.GET("/task/:id", handler.GetTask) // 获取任务状态
 	}
 }
-
