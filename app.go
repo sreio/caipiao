@@ -2,12 +2,11 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 
-	"caipiao/config"
-	"caipiao/database"
-	"caipiao/services"
+	"caipiao/backend/config"
+	"caipiao/backend/database"
+	"caipiao/backend/services"
 )
 
 // App 应用结构
@@ -52,7 +51,14 @@ func (a *App) Shutdown(ctx context.Context) {
 
 // GetShuangseqiuList 获取双色球列表
 func (a *App) GetShuangseqiuList(page, pageSize int, issue string) (interface{}, error) {
-	return a.lotteryService.GetShuangseqiuList(page, pageSize, issue)
+	list, total, err := a.lotteryService.GetShuangseqiuList(page, pageSize, issue)
+	if err != nil {
+		return nil, err
+	}
+	return map[string]interface{}{
+		"list":  list,
+		"total": total,
+	}, nil
 }
 
 // FetchShuangseqiu 获取双色球数据
@@ -81,7 +87,14 @@ func (a *App) GetShuangseqiuRecommendation(count int) (interface{}, error) {
 
 // GetDaletouList 获取大乐透列表
 func (a *App) GetDaletouList(page, pageSize int, issue string) (interface{}, error) {
-	return a.lotteryService.GetDaletouList(page, pageSize, issue)
+	list, total, err := a.lotteryService.GetDaletouList(page, pageSize, issue)
+	if err != nil {
+		return nil, err
+	}
+	return map[string]interface{}{
+		"list":  list,
+		"total": total,
+	}, nil
 }
 
 // FetchDaletou 获取大乐透数据
@@ -106,4 +119,22 @@ func (a *App) GetDaletouTrend(limit int) (interface{}, error) {
 // GetDaletouRecommendation 获取大乐透推荐
 func (a *App) GetDaletouRecommendation(count int) (interface{}, error) {
 	return a.recommendService.GenerateDaletouRecommendation(count)
+}
+
+// FetchShuangseqiuHistory 批量获取双色球历史数据
+func (a *App) FetchShuangseqiuHistory(count int) (interface{}, error) {
+	result, err := a.lotteryService.FetchShuangseqiuHistory(count)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// FetchDaletouHistory 批量获取大乐透历史数据
+func (a *App) FetchDaletouHistory(count int) (interface{}, error) {
+	result, err := a.lotteryService.FetchDaletouHistory(count)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }

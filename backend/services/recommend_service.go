@@ -1,8 +1,8 @@
 package services
 
 import (
-	"caipiao/database"
-	"caipiao/models"
+	"caipiao/backend/database"
+	"caipiao/backend/models"
 	"fmt"
 	"math/rand"
 	"sort"
@@ -128,6 +128,8 @@ func (s *RecommendService) GenerateDaletouRecommendation(count int) ([]DaletouRe
 	hotFronts := s.analyzeHotNumbersDLT(results, "front", 10)
 	coldFronts := s.analyzeColdNumbersDLT(results, "front", 10)
 	hotBacks := s.analyzeHotNumbersDLT(results, "back", 5)
+	// hotCount := len(hotBalls) // 未使用，注释掉
+	// coldCount := len(coldBalls)  // 未使用，注释掉
 
 	recommendations := make([]DaletouRecommendation, count)
 
@@ -329,7 +331,7 @@ func (s *RecommendService) analyzeColdNumbersDLT(results []models.Daletou, ballT
 // generateFromHot 从热门号码中生成
 func (s *RecommendService) generateFromHot(hotNumbers []int, count int) []int {
 	rand.Seed(time.Now().UnixNano())
-	
+
 	// 从热门号码中随机选择
 	selected := make(map[int]bool)
 	var result []int
@@ -349,7 +351,7 @@ func (s *RecommendService) generateFromHot(hotNumbers []int, count int) []int {
 // generateFromCold 从冷门号码中生成
 func (s *RecommendService) generateFromCold(coldNumbers []int, count int) []int {
 	rand.Seed(time.Now().UnixNano())
-	
+
 	selected := make(map[int]bool)
 	var result []int
 
@@ -368,13 +370,13 @@ func (s *RecommendService) generateFromCold(coldNumbers []int, count int) []int 
 // combineHotAndCold 冷热结合生成
 func (s *RecommendService) combineHotAndCold(hotNumbers, coldNumbers []int, count int) []int {
 	rand.Seed(time.Now().UnixNano())
-	
+
 	selected := make(map[int]bool)
 	var result []int
 
 	// 一半热号，一半冷号
 	hotCount := count / 2
-	coldCount := count - hotCount
+	// coldCount := count - hotCount  // 未使用，已删除
 
 	// 选择热号
 	for len(result) < hotCount && len(hotNumbers) > 0 {
@@ -402,7 +404,7 @@ func (s *RecommendService) combineHotAndCold(hotNumbers, coldNumbers []int, coun
 // selectRandom 随机选择指定数量的号码
 func (s *RecommendService) selectRandom(numbers []int, count int) []int {
 	rand.Seed(time.Now().UnixNano())
-	
+
 	selected := make(map[int]bool)
 	var result []int
 

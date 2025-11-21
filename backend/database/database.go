@@ -1,7 +1,7 @@
 package database
 
 import (
-	"caipiao/models"
+	"caipiao/backend/models"
 	"fmt"
 	"log"
 	"os"
@@ -59,7 +59,7 @@ func createIndexes(db *gorm.DB) error {
 		"CREATE INDEX IF NOT EXISTS idx_ssq_draw_date ON shuangseqiu(draw_date DESC)",
 		// 创建时间索引
 		"CREATE INDEX IF NOT EXISTS idx_ssq_created_at ON shuangseqiu(created_at DESC)",
-		
+
 		// 大乐透表索引
 		// 开奖日期索引（倒序，常用于列表查询）
 		"CREATE INDEX IF NOT EXISTS idx_dlt_draw_date ON daletou(draw_date DESC)",
@@ -81,4 +81,3 @@ func createIndexes(db *gorm.DB) error {
 func GetDB() *gorm.DB {
 	return DB
 }
-

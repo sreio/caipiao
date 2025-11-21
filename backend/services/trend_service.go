@@ -1,8 +1,8 @@
 package services
 
 import (
-	"caipiao/database"
-	"caipiao/models"
+	"caipiao/backend/database"
+	"caipiao/backend/models"
 )
 
 // TrendService 走势图服务
@@ -15,28 +15,28 @@ func NewTrendService() *TrendService {
 
 // ShuangseqiuTrendData 双色球走势数据
 type ShuangseqiuTrendData struct {
-	Issues      []string                `json:"issues"`       // 期号列表
-	DrawDates   []string                `json:"draw_dates"`   // 开奖日期列表
-	RedBalls    [][]int                 `json:"red_balls"`    // 每期的红球号码
-	BlueBalls   []int                   `json:"blue_balls"`   // 每期的蓝球号码
-	RedFreq     map[int]int             `json:"red_freq"`     // 红球频率统计
-	BlueFreq    map[int]int             `json:"blue_freq"`    // 蓝球频率统计
-	RedMissing  map[int]int             `json:"red_missing"`  // 红球遗漏值
-	BlueMissing map[int]int             `json:"blue_missing"` // 蓝球遗漏值
-	Records     []models.Shuangseqiu    `json:"records"`      // 原始记录
+	Issues      []string             `json:"issues"`       // 期号列表
+	DrawDates   []string             `json:"draw_dates"`   // 开奖日期列表
+	RedBalls    [][]int              `json:"red_balls"`    // 每期的红球号码
+	BlueBalls   []int                `json:"blue_balls"`   // 每期的蓝球号码
+	RedFreq     map[int]int          `json:"red_freq"`     // 红球频率统计
+	BlueFreq    map[int]int          `json:"blue_freq"`    // 蓝球频率统计
+	RedMissing  map[int]int          `json:"red_missing"`  // 红球遗漏值
+	BlueMissing map[int]int          `json:"blue_missing"` // 蓝球遗漏值
+	Records     []models.Shuangseqiu `json:"records"`      // 原始记录
 }
 
 // DaletouTrendData 大乐透走势数据
 type DaletouTrendData struct {
-	Issues       []string             `json:"issues"`        // 期号列表
-	DrawDates    []string             `json:"draw_dates"`    // 开奖日期列表
-	FrontBalls   [][]int              `json:"front_balls"`   // 每期的前区号码
-	BackBalls    [][]int              `json:"back_balls"`    // 每期的后区号码
-	FrontFreq    map[int]int          `json:"front_freq"`    // 前区频率统计
-	BackFreq     map[int]int          `json:"back_freq"`     // 后区频率统计
-	FrontMissing map[int]int          `json:"front_missing"` // 前区遗漏值
-	BackMissing  map[int]int          `json:"back_missing"`  // 后区遗漏值
-	Records      []models.Daletou     `json:"records"`       // 原始记录
+	Issues       []string         `json:"issues"`        // 期号列表
+	DrawDates    []string         `json:"draw_dates"`    // 开奖日期列表
+	FrontBalls   [][]int          `json:"front_balls"`   // 每期的前区号码
+	BackBalls    [][]int          `json:"back_balls"`    // 每期的后区号码
+	FrontFreq    map[int]int      `json:"front_freq"`    // 前区频率统计
+	BackFreq     map[int]int      `json:"back_freq"`     // 后区频率统计
+	FrontMissing map[int]int      `json:"front_missing"` // 前区遗漏值
+	BackMissing  map[int]int      `json:"back_missing"`  // 后区遗漏值
+	Records      []models.Daletou `json:"records"`       // 原始记录
 }
 
 // GetShuangseqiuTrend 获取双色球走势数据
@@ -207,4 +207,3 @@ func (s *TrendService) GetDaletouTrend(limit int) (*DaletouTrendData, error) {
 
 	return trend, nil
 }
-

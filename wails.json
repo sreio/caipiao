@@ -2,14 +2,12 @@
     "$schema": "https://wails.io/schemas/config.v2.json",
     "name": "caipiao",
     "outputfilename": "彩票助手",
-    "frontend:install": "cd frontend && npm install",
-    "frontend:build": "cd frontend && npm run build",
-    "frontend:dev:watcher": "cd frontend && npm run dev",
+    "frontend:install": "cd ./frontend && npm install",
+    "frontend:build": "cd ./frontend && npm run build",
+    "frontend:dev:watcher": "cd ./frontend && npm run dev",
     "frontend:dev:serverUrl": "auto",
-    "wailsjsdir": "./frontend",
     "assetdir": "./frontend/dist",
     "reloaddirs": "backend",
-    "build:dir": "build",
     "author": {
         "name": "Caipiao Team",
         "email": "team@caipiao.com"

@@ -20,9 +20,9 @@ func main() {
 
 	// 创建Wails应用
 	err := wails.Run(&options.App{
-		Title:  "彩票数据管理系统",
-		Width:  1280,
-		Height: 800,
+		Title:     "彩票数据管理系统",
+		Width:     1280,
+		Height:    800,
 		MinWidth:  1024,
 		MinHeight: 768,
 		AssetServer: &assetserver.Options{

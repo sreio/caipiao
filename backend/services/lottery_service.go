@@ -1,8 +1,8 @@
 package services
 
 import (
-	"caipiao/database"
-	"caipiao/models"
+	"caipiao/backend/database"
+	"caipiao/backend/models"
 	"fmt"
 	"log"
 	"strconv"

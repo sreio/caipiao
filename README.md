@@ -1,549 +1,498 @@
-# 🎰 彩票数据管理系统
+# 🎲 彩票数据管理系统
 
-> 基于 Go + Vue3 的全栈彩票数据管理、统计分析和智能推荐系统
+一个功能强大的彩票数据管理、分析和智能推荐系统，支持**双色球**和**大乐透**两种彩票类型。
+
+**🎯 双模式支持**: Web应用 + 跨平台桌面应用（Windows/macOS）
 
 [![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?style=flat&logo=go)](https://golang.org)
-[![Vue Version](https://img.shields.io/badge/Vue-3.4+-4FC08D?style=flat&logo=vue.js)](https://vuejs.org)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![PWA](https://img.shields.io/badge/PWA-Enabled-blueviolet)](https://web.dev/progressive-web-apps/)
-
-## 📖 项目简介
-
-一个功能完整的彩票数据管理系统，支持**双色球**和**大乐透**的数据获取、存储、统计分析和智能推荐。采用现代化技术栈，支持Docker一键部署、PWA离线使用、Redis缓存加速等特性。
-
-### ✨ 核心特性
-
-- 🎯 **双彩种支持** - 完整支持双色球和大乐透
-- 📊 **数据可视化** - ECharts走势图、频率统计、遗漏分析
-- 🤖 **智能推荐** - 基于热号、冷号、周期等多维度算法推荐
-- ⚡ **高性能** - Redis缓存、数据库索引、虚拟滚动优化
-- 📱 **PWA支持** - 可安装、离线访问、类原生体验
-- 🐳 **容器化部署** - Docker + Docker Compose 一键部署
-- 🌐 **官方数据源** - 对接中国福彩和体彩官方API
+[![Vue Version](https://img.shields.io/badge/Vue-3.x-4FC08D?style=flat&logo=vue.js)](https://vuejs.org)
+[![Wails](https://img.shields.io/badge/Wails-v2.11.0-DF0032?style=flat)](https://wails.io)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ---
 
-## 🎨 功能展示
+## 📋 目录
 
-### 1. 数据管理
-- ✅ 获取最新一期开奖数据
-- ✅ 批量获取历史数据（最多500期）
-- ✅ 异步任务处理大批量数据
-- ✅ 期号搜索、分页展示
-- ✅ 自动去重，避免重复保存
-
-### 2. 统计分析
-- 📈 **号码频率统计** - 红球/蓝球/前区/后区出现次数
-- 📊 **走势图分析** - 支持30/50/100/200期数据展示
-- 🔥 **热门号码** - Top 10高频号码柱状图
-- ❄️ **遗漏分析** - 长期未出现号码智能提醒
-
-### 3. 智能推荐
-- 🎯 **热号策略** - 基于近期高频号码推荐
-- 🧊 **冷号策略** - 基于长期遗漏号码推荐
-- ⚖️ **冷热结合** - 均衡选择，稳健投注
-- 📋 **一键生成** - 可生成1-10注推荐号码
-- 💡 **推荐依据** - 提供详细的推荐理由说明
-
-### 4. PWA特性
-- 📲 **添加到主屏幕** - 像原生应用一样使用
-- 🔌 **离线访问** - 支持离线浏览已加载内容
-- ⚡ **快速加载** - Service Worker资源缓存
-- 🔄 **自动更新** - 检测新版本自动更新
+- [功能特性](#-功能特性)
+- [技术栈](#-技术栈)
+- [运行模式](#-运行模式)
+- [快速开始](#-快速开始)
+- [详细使用](#-详细使用)
+- [项目结构](#-项目结构)
+- [开发指南](#-开发指南)
+- [部署](#-部署)
+- [文档](#-文档)
+- [贡献](#-贡献)
+- [许可证](#-许可证)
 
 ---
 
-## 🏗️ 技术架构
+## ✨ 功能特性
 
-### 后端技术栈
+### 🎰 彩票数据管理
+- ✅ **数据获取**: 从官方API自动获取最新开奖数据
+- ✅ **批量导入**: 支持批量获取历史数据（1-2000期）
+- ✅ **智能去重**: 自动跳过已存在数据，避免重复
+- ✅ **本地存储**: SQLite数据库，轻量高效
 
-| 技术 | 版本 | 用途 |
-|------|------|------|
-| **Go** | 1.25+ | 主要编程语言 |
-| **Gin** | 1.9.1 | Web框架 |
-| **GORM** | 1.25.5 | ORM框架 |
-| **SQLite** | - | 嵌入式数据库 |
-| **Redis** | 7+ | 缓存数据库 |
-| **Resty** | 2.16.5 | HTTP客户端 |
+### 📊 数据分析
+- ✅ **走势分析**: 可视化展示号码出现趋势
+- ✅ **统计分析**: 热号、冷号、遗漏值统计
+- ✅ **图表展示**: 直观的图表展示分析结果
+- ✅ **自定义周期**: 支持自定义分析期数
 
-### 前端技术栈
+### 🎯 智能推荐
+- ✅ **多策略推荐**: 基于热号、冷号、冷热结合三种策略
+- ✅ **批量生成**: 一次生成多注推荐号码
+- ✅ **置信度标注**: 每注号码附带推荐依据
+- ✅ **实时更新**: 基于最新100期数据动态推荐
 
-| 技术 | 版本 | 用途 |
-|------|------|------|
-| **Vue 3** | 3.4.0 | 前端框架 |
-| **Element Plus** | 2.5.0 | UI组件库 |
-| **ECharts** | 6.0.0 | 数据可视化 |
-| **Vue Router** | 4.2.5 | 路由管理 |
-| **Pinia** | 2.1.7 | 状态管理 |
-| **Axios** | 1.6.0 | HTTP客户端 |
-| **Vite** | 5.0.0 | 构建工具 |
-
-### 系统架构
-
-```
-┌─────────────────┐
-│   Nginx (80)    │  ← 前端静态资源 + 反向代理
-└────────┬────────┘
-         │
-         ↓
-┌─────────────────┐
-│   Go API (8080) │  ← RESTful API
-└────────┬────────┘
-         │
-    ┌────┴────┐
-    ↓         ↓
-┌────────┐ ┌──────────┐
-│ SQLite │ │ Redis    │  ← 数据存储 + 缓存
-└────────┘ └──────────┘
-```
+### 💎 用户体验
+- ✅ **响应式设计**: 完美适配桌面、平板、手机
+- ✅ **暗黑模式**: 护眼模式，可自由切换
+- ✅ **PWA支持**: Web版可安装到桌面（离线使用）
+- ✅ **双模式**: Web浏览器 + 原生桌面应用
 
 ---
 
-## 🚀 快速开始
+## 🛠️ 技术栈
 
-### 环境要求
+### 后端
+- **Go 1.25+**: 高性能后端服务
+- **Gin**: Web框架
+- **GORM**: ORM数据库操作
+- **SQLite**: 轻量级数据库
+- **Redis**: 缓存服务（Web模式可选）
+- **Wails v2**: 桌面应用框架
 
-**方式一：Docker部署（推荐）**
-- Docker 20.10+
-- Docker Compose 2.0+
+### 前端
+- **Vue 3**: 渐进式前端框架
+- **Vite**: 快速构建工具
+- **Element Plus**: UI组件库
+- **ECharts**: 数据可视化
+- **Axios**: HTTP客户端
+- **Pinia**: 状态管理
 
-**方式二：本地开发**
+### 桌面应用
+- **Wails v2.11.0**: Go + Web技术构建原生应用
+- **API适配层**: 自动适配Web/桌面环境
+- **统一代码库**: 一套代码，多种运行方式
+
+---
+
+## 🚀 运行模式
+
+本项目支持**两种运行模式**，使用同一套代码库：
+
+### 1️⃣ Web应用模式
+
+**特点**:
+- 浏览器访问
+- 支持PWA（可安装）
+- 支持Redis缓存
+- 支持异步批量任务
+- 支持Docker部署
+
+**适用场景**: 
+- 需要多用户访问
+- 云端部署
+- 移动端访问
+
+### 2️⃣ 桌面应用模式
+
+**特点**:
+- 原生应用体验
+- 无需浏览器
+- 数据本地存储
+- 跨平台支持
+- 性能更优
+
+**适用场景**:
+- 个人使用
+- 离线使用
+- 隐私要求高
+
+---
+
+## 🏃 快速开始
+
+### 方式一: 桌面应用（推荐个人用户）
+
+**直接下载运行**（无需安装Go/Node）：
+
+1. **下载应用**
+   - 从 [Releases](https://github.com/your-repo/releases) 下载对应平台的安装包
+   - macOS (ARM): `彩票助手-macOS-arm64.app.tar.gz`
+   - macOS (Intel): `彩票助手-macOS-amd64.app.tar.gz`
+   - Windows: `彩票助手-Windows-amd64.exe`
+
+2. **安装运行**
+   ```bash
+   # macOS
+   tar -xzf 彩票助手-macOS-arm64.app.tar.gz
+   open 彩票助手.app
+   
+   # Windows
+   # 直接双击 .exe 文件
+   ```
+
+3. **开始使用** 🎉
+   - 应用会自动创建数据库
+   - 数据存储位置:
+     - macOS: `~/Library/Application Support/caipiao/`
+     - Windows: `%APPDATA%/caipiao/`
+
+### 方式二: Web应用（推荐团队/服务器部署）
+
+#### 前置要求
 - Go 1.25+
 - Node.js 18+
-- Redis 7+ （可选，用于缓存）
+- Redis（可选）
 
-### 📦 安装部署
-
-#### 🐳 Docker部署（推荐）
+#### 安装步骤
 
 ```bash
 # 1. 克隆项目
-git clone <repository-url>
+git clone https://github.com/your-repo/caipiao.git
 cd caipiao
 
-# 2. 一键启动所有服务
-docker-compose up -d
-
-# 3. 查看服务状态
-docker-compose ps
-
-# 4. 访问应用
-# 前端: http://localhost
-# 后端: http://localhost:8080
-```
-
-#### 💻 本地开发部署
-
-**启动后端：**
-
-```bash
+# 2. 启动后端
 cd backend
-
-# 安装依赖
 go mod download
+go run .
 
-# 启动Redis（可选，用于缓存）
-redis-server
-
-# 运行后端服务
-go run main.go
-
-# 后端将在 http://localhost:8080 启动
-```
-
-**启动前端：**
-
-```bash
+# 3. 启动前端（新终端）
 cd frontend
-
-# 安装依赖
 npm install
-
-# 启动开发服务器
 npm run dev
 
-# 前端将在 http://localhost:5173 启动
+# 4. 访问
+# 打开浏览器访问: http://localhost:5173
 ```
 
----
-
-## 🎮 使用指南
-
-### 基础操作
-
-1. **查看开奖数据**
-   - 访问首页，选择"双色球"或"大乐透"
-   - 自动显示最新开奖记录列表
-
-2. **搜索期号**
-   - 在搜索框输入期号（如：2024001）
-   - 支持模糊匹配
-
-3. **获取数据**
-   - 点击"获取最新数据"按钮获取最新一期
-   - 点击"批量获取"可指定获取期数（最多500期）
-
-4. **查看统计**
-   - 点击"数据统计"查看号码频率分布
-   - 支持切换红球/蓝球或前区/后区
-
-5. **走势分析**
-   - 点击"走势图"进入走势分析页面
-   - 支持选择30/50/100/200期数据
-   - 查看热门号码Top 10和遗漏值
-
-6. **智能推荐**
-   - 点击"智能推荐"获取推荐号码
-   - 提供热号、冷号、冷热结合三种策略
-   - 可生成1-10注推荐号码
-
-### PWA使用
-
-#### 安装到设备
-
-**桌面端（Chrome/Edge）：**
-1. 访问应用网址
-2. 点击地址栏右侧的安装图标 ⊕
-3. 点击"安装"按钮
-4. 应用将作为独立窗口打开
-
-**移动端（iOS/Android）：**
-1. 使用Safari（iOS）或Chrome（Android）访问
-2. iOS: 点击分享按钮 → 选择"添加到主屏幕"
-3. Android: 点击菜单 → 选择"安装应用"或"添加到主屏幕"
-
-#### 离线使用
-
-1. 首次访问时，Service Worker会自动缓存必要资源
-2. 断网后仍可访问已缓存的页面和数据
-3. 重新联网后会自动同步最新数据
-
-#### 更新应用
-
-- 应用会自动检测新版本
-- 发现新版本时会提示刷新
-- 刷新后即可使用最新功能
-
----
-
-## 🔌 API文档
-
-### 双色球接口
-
-| 接口 | 方法 | 说明 |
-|------|------|------|
-| `/api/shuangseqiu/list` | GET | 获取列表 |
-| `/api/shuangseqiu/fetch` | POST | 获取单期数据 |
-| `/api/shuangseqiu/fetch-history` | POST | 批量获取历史 |
-| `/api/shuangseqiu/statistics` | GET | 获取统计数据 |
-| `/api/shuangseqiu/trend` | GET | 获取走势数据 |
-| `/api/shuangseqiu/recommend` | GET | 智能推荐 |
-
-### 大乐透接口
-
-| 接口 | 方法 | 说明 |
-|------|------|------|
-| `/api/daletou/list` | GET | 获取列表 |
-| `/api/daletou/fetch` | POST | 获取单期数据 |
-| `/api/daletou/fetch-history` | POST | 批量获取历史 |
-| `/api/daletou/statistics` | GET | 获取统计数据 |
-| `/api/daletou/trend` | GET | 获取走势数据 |
-| `/api/daletou/recommend` | GET | 智能推荐 |
-
-### 请求示例
+#### 使用Docker（最简单）
 
 ```bash
-# 获取双色球列表（分页）
-curl "http://localhost:8080/api/shuangseqiu/list?page=1&page_size=20"
+# 1. 使用docker-compose启动
+docker-compose up -d
 
-# 获取统计数据
-curl "http://localhost:8080/api/shuangseqiu/statistics?type=red"
-
-# 获取智能推荐（5注）
-curl "http://localhost:8080/api/shuangseqiu/recommend?count=5"
-```
-
-### 响应格式
-
-```json
-{
-  "code": 0,
-  "msg": "success",
-  "data": {
-    "list": [...],
-    "total": 100,
-    "page": 1,
-    "page_size": 20
-  }
-}
+# 2. 访问
+# 打开浏览器访问: http://localhost
 ```
 
 ---
 
-## 🛠️ 开发指南
+## 📖 详细使用
 
-### 项目结构
+### 桌面应用
+
+#### 获取数据
+
+1. **获取最新数据**
+   - 点击"获取最新数据"按钮
+   - 自动从官方API获取最新一期
+
+2. **批量获取历史数据**
+   - 点击"批量获取历史数据"
+   - 输入期数（如100）
+   - 点击"开始获取"
+   - 耐心等待（每期约1秒）
+
+3. **指定期数获取**
+   - 点击"指定期数获取"
+   - 输入期号（如2024001）
+   - 点击"确定"
+
+#### 数据分析
+
+1. **查看走势**
+   - 点击顶部导航"双色球走势"或"大乐透走势"
+   - 可视化图表展示号码趋势
+   - 支持自定义分析期数
+
+2. **统计分析**
+   - 在数据列表页点击"数据统计"
+   - 查看热号、冷号频率
+   - 红球/蓝球分别统计
+
+#### 智能推荐
+
+- 点击顶部导航"双色球推荐"或"大乐透推荐"
+- 选择生成注数（1-10注）
+- 点击"生成推荐"
+- 查看推荐号码及依据
+
+### Web应用
+
+使用方式与桌面应用基本相同，额外功能：
+
+- **PWA安装**: 浏览器地址栏点击安装图标
+- **多标签页**: 可同时查看多个页面
+- **异步任务**: 批量获取大量数据时支持后台任务
+
+---
+
+## 📁 项目结构
 
 ```
 caipiao/
-├── backend/                 # 后端服务
-│   ├── api/                 # API路由和处理器
-│   │   ├── handlers.go      # API处理函数
-│   │   └── routes.go        # 路由配置
-│   ├── config/              # 配置管理
-│   ├── database/            # 数据库初始化
-│   ├── models/              # 数据模型
-│   │   ├── shuangseqiu.go   # 双色球模型
-│   │   └── daletou.go       # 大乐透模型
-│   ├── services/            # 业务逻辑
-│   │   ├── lottery_service.go    # 彩票服务
-│   │   ├── trend_service.go      # 走势服务
-│   │   ├── cache_service.go      # 缓存服务
-│   │   ├── recommend_service.go  # 推荐服务
-│   │   └── task_manager.go       # 任务管理
-│   ├── main.go              # 程序入口
-│   ├── Dockerfile           # Docker镜像构建
-│   └── go.mod               # Go模块依赖
-├── frontend/                # 前端项目
-│   ├── src/
-│   │   ├── api/             # API接口定义
-│   │   ├── components/      # 可复用组件
-│   │   ├── router/          # 路由配置
-│   │   ├── views/           # 页面视图
-│   │   │   ├── Shuangseqiu.vue          # 双色球主页
-│   │   │   ├── ShuangseqiuTrend.vue     # 双色球走势
-│   │   │   ├── ShuangseqiuRecommend.vue # 双色球推荐
-│   │   │   ├── Daletou.vue              # 大乐透主页
-│   │   │   ├── DaletouTrend.vue         # 大乐透走势
-│   │   │   └── DaletouRecommend.vue     # 大乐透推荐
-│   │   ├── App.vue          # 根组件
-│   │   └── main.js          # 入口文件
-│   ├── public/              # 静态资源
-│   ├── Dockerfile           # Docker镜像构建
-│   ├── nginx.conf           # Nginx配置
-│   ├── package.json         # npm依赖
-│   └── vite.config.js       # Vite配置
-├── docker-compose.yml       # Docker编排
-└── README.md                # 项目文档
+├─ backend/              # Go后端
+│  ├─ api/              # API路由和处理器
+│  ├─ config/           # 配置管理
+│  ├─ database/         # 数据库初始化
+│  ├─ middleware/       # 中间件
+│  ├─ models/           # 数据模型
+│  ├─ services/         # 业务逻辑
+│  └─ main.go          # Web服务入口
+│
+├─ frontend/            # Vue前端
+│  ├─ public/          # 静态资源
+│  ├─ src/             
+│  │  ├─ api/         # API调用（含适配层）
+│  │  ├─ assets/      # 图片、样式
+│  │  ├─ components/  # 组件
+│  │  ├─ router/      # 路由
+│  │  ├─ stores/      # 状态管理
+│  │  ├─ utils/       # 工具函数
+│  │  ├─ views/       # 页面
+│  │  ├─ App.vue      # 根组件
+│  │  └─ main.js      # 入口文件
+│  ├─ vite.config.js  # Vite配置
+│  └─ package.json
+│
+├─ build/               # Wails构建配置
+├─ .github/workflows/   # GitHub Actions
+├─ app.go              # Wails应用入口
+├─ main.go             # Wails主函数
+├─ utils.go            # Wails工具函数
+├─ wails.json          # Wails配置
+├─ go.mod              # Go依赖
+├─ docker-compose.yml  # Docker配置
+└─ README.md           # 本文件
 ```
 
-### 添加新功能
+---
 
-**后端添加API接口：**
+## 👨‍💻 开发指南
 
-1. 在 `models/` 中定义数据模型
-2. 在 `services/` 中实现业务逻辑
-3. 在 `api/handlers.go` 中添加处理函数
-4. 在 `api/routes.go` 中注册路由
+### 桌面应用开发
 
-**前端添加页面：**
-
-1. 在 `views/` 中创建Vue组件
-2. 在 `router/index.js` 中注册路由
-3. 在 `api/` 中定义接口调用
-
-### 本地调试
+#### 环境要求
+- Go 1.25+
+- Node.js 18+
+- Wails CLI v2.11.0
 
 ```bash
-# 后端热重载（使用air）
-go install github.com/cosmtrek/air@latest
-cd backend && air
+# 安装Wails CLI
+go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
-# 前端热重载（Vite自带）
-cd frontend && npm run dev
+# 验证安装
+wails doctor
 ```
 
-### 构建生产版本
+#### 开发调试
 
 ```bash
-# 后端编译
+# 开发模式（热重载）
+wails dev
+```
+
+#### 构建应用
+
+```bash
+# 构建当前平台
+wails build
+
+# 构建所有平台（需要相应工具链）
+wails build -platform windows/amd64
+wails build -platform darwin/universal
+```
+
+#### 添加新功能
+
+1. **后端**: 在 `app.go` 添加新方法
+   ```go
+   func (a *App) YourNewMethod(param string) (interface{}, error) {
+       // 实现逻辑
+       return result, nil
+   }
+   ```
+
+2. **重新生成绑定**
+   ```bash
+   wails generate module
+   ```
+
+3. **前端**: 更新API适配层 (`frontend/src/api/adapter.js`)
+   ```javascript
+   async yourNewMethod(param) {
+       const wails = await getWailsAPI()
+       if (wails) {
+           return await wails.YourNewMethod(param)
+       }
+       return axios.get('/api/your-endpoint')
+   }
+   ```
+
+### Web应用开发
+
+#### 本地开发
+
+```bash
+# 启动后端（终端1）
 cd backend
-go build -o lottery-server main.go
+go run .
 
-# 前端构建
+# 启动前端（终端2）
+cd frontend
+npm run dev
+```
+
+#### 添加API
+
+1. **后端**: `backend/api/handlers.go` 添加处理器
+2. **前端**: `frontend/src/api/` 添加API调用
+
+### 代码规范
+
+- **Go**: 使用 `go fmt` 格式化
+- **Vue**: 使用 ESLint + Prettier
+- **提交**: 使用语义化提交消息
+
+---
+
+## 🚢 部署
+
+### Docker部署（推荐）
+
+```bash
+# 构建镜像
+docker-compose build
+
+# 启动服务
+docker-compose up -d
+
+# 查看日志
+docker-compose logs -f
+
+# 停止服务
+docker-compose down
+```
+
+### 手动部署
+
+#### 后端
+
+```bash
+cd backend
+go build -o caipiao
+./caipiao
+```
+
+#### 前端
+
+```bash
 cd frontend
 npm run build
-# 构建产物在 dist/ 目录
+# 将 dist/ 目录部署到Nginx/Apache
 ```
 
----
+### 桌面应用分发
 
-## 📊 性能优化
+#### GitHub Actions自动构建
 
-### 已实施优化
-
-1. **数据库索引** - 为常用查询字段添加索引，查询速度提升50%+
-2. **Redis缓存** - 统计数据缓存1小时，API响应速度提升80%+
-3. **虚拟滚动** - 大列表渲染优化，内存占用降低50%
-4. **资源压缩** - Gzip压缩，传输大小减少70%
-5. **PWA缓存** - 静态资源离线缓存，二次访问速度提升90%
-
-### 性能指标
-
-| 指标 | 优化前 | 优化后 | 提升 |
-|------|-------|-------|-----|
-| 列表查询 | 200ms | 100ms | 50% |
-| 统计查询 | 500ms | 100ms | 80% |
-| 页面加载 | 2.5s | 0.8s | 68% |
-| 滚动渲染 | 30fps | 60fps | 100% |
-
----
-
-## 🔧 配置说明
-
-### 后端配置
-
-编辑 `backend/config/config.go`：
-
-```go
-Server.Port: "8080"              // 服务端口
-Server.Mode: "release"           // 运行模式（debug/release）
-Database.Path: "./data/lottery.db"  // 数据库路径
-```
-
-### 环境变量
+推送tag自动构建多平台版本：
 
 ```bash
-# Redis配置（可选）
-export REDIS_HOST=localhost:6379
-
-# Gin运行模式
-export GIN_MODE=release
+git tag v1.0.0
+git push origin v1.0.0
 ```
 
-### 前端配置
+自动生成：
+- Windows安装包
+- macOS应用（Intel + ARM）
+- 自动发布到GitHub Releases
 
-编辑 `frontend/vite.config.js`：
+#### 手动构建
 
-```javascript
-server: {
-  port: 5173,                    // 开发服务器端口
-  proxy: {
-    '/api': {
-      target: 'http://localhost:8080'  // 后端API地址
-    }
-  }
-}
-```
-
----
-
-## 🐛 常见问题
-
-### Q1: Docker启动失败？
-
-**A:** 检查端口是否被占用：
 ```bash
-# 检查端口占用
-lsof -i :80
-lsof -i :8080
-lsof -i :6379
+# macOS
+wails build -platform darwin/universal
 
-# 修改docker-compose.yml中的端口映射
+# Windows (需要在Windows上或配置交叉编译)
+wails build -platform windows/amd64
+
+# Linux
+wails build -platform linux/amd64
 ```
 
-### Q2: 前端无法连接后端API？
+---
 
-**A:** 确保：
-1. 后端服务已启动（http://localhost:8080）
-2. 前端代理配置正确（vite.config.js）
-3. 清除浏览器缓存重新访问
+## 📚 文档
 
-### Q3: 获取数据失败429错误？
-
-**A:** 官方API有频率限制：
-- 降低获取频率
-- 批量获取时增加间隔时间
-- 使用已缓存的数据
-
-### Q4: PWA无法安装？
-
-**A:** 检查：
-1. 必须使用HTTPS或localhost
-2. 需要有效的manifest.json
-3. 浏览器版本需支持PWA（Chrome 80+, Safari 11.1+）
-
-### Q5: Redis连接失败？
-
-**A:** Redis是可选的：
-- 未安装Redis时系统仍可正常运行，只是不使用缓存
-- 如需缓存功能，确保Redis服务已启动
-- Docker部署会自动包含Redis服务
+- [Wails桌面应用设置](WAILS_SETUP.md) - 技术实现详情
+- [Wails使用指南](WAILS_USAGE.md) - API适配层使用
+- [批量获取功能](BATCH_FETCH_FIXED.md) - 批量获取说明
+- [调试指南](DEBUG_BATCH_FETCH.md) - 问题诊断
+- [成功总结](WAILS_SUCCESS.md) - 项目完成情况
 
 ---
 
-## 📄 数据库结构
+## 🎯 路线图
 
-### 双色球表（shuangseqiu）
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| id | INTEGER | 主键 |
-| issue | TEXT | 期号（唯一） |
-| red_ball_1~6 | INTEGER | 红球1-6 |
-| blue_ball | INTEGER | 蓝球 |
-| draw_date | DATETIME | 开奖日期 |
-| created_at | DATETIME | 创建时间 |
-| updated_at | DATETIME | 更新时间 |
-
-### 大乐透表（daletou）
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| id | INTEGER | 主键 |
-| issue | TEXT | 期号（唯一） |
-| front_ball_1~5 | INTEGER | 前区1-5 |
-| back_ball_1~2 | INTEGER | 后区1-2 |
-| draw_date | DATETIME | 开奖日期 |
-| created_at | DATETIME | 创建时间 |
-| updated_at | DATETIME | 更新时间 |
+- [x] 基础数据管理功能
+- [x] 走势分析和统计
+- [x] 智能推荐算法
+- [x] Web应用完整功能
+- [x] PWA支持
+- [x] Docker部署
+- [x] Wails桌面应用
+- [x] GitHub Actions自动构建
+- [ ] 更多推荐策略
+- [ ] 数据导出功能
+- [ ] 用户系统（Web版）
+- [ ] 移动端优化
 
 ---
 
-## 🤝 参与贡献
+## 🤝 贡献
 
-欢迎提交Issue和Pull Request！
+欢迎贡献代码、报告问题或提出建议！
 
-1. Fork本仓库
+1. Fork本项目
 2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
 3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 提交Pull Request
+5. 开启Pull Request
 
 ---
 
-## 📝 开发计划
+## 📄 许可证
 
-- [ ] 添加用户系统和权限管理
-- [ ] 支持更多彩票玩法
-- [ ] 数据导出功能（Excel/CSV）
-- [ ] 移动端原生应用
-- [ ] 更多推荐算法（机器学习）
-- [ ] 实时开奖通知
-
----
-
-## 📜 许可证
-
-本项目采用 [MIT](LICENSE) 许可证。
-
----
-
-## 👨‍💻 作者
-
-Created with ❤️ by Caipiao Team
+本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情
 
 ---
 
 ## 🙏 致谢
 
-- 数据来源：[中国福利彩票官网](https://www.cwl.gov.cn) | [中国体育彩票官网](https://www.sporttery.cn)
-- UI框架：[Element Plus](https://element-plus.org)
-- 图表库：[Apache ECharts](https://echarts.apache.org)
-- Web框架：[Gin](https://gin-gonic.com)
+- [Wails](https://wails.io) - 优秀的Go桌面应用框架
+- [Vue.js](https://vuejs.org) - 渐进式JavaScript框架
+- [Element Plus](https://element-plus.org) - Vue 3 UI组件库
+- [ECharts](https://echarts.apache.org) - 强大的可视化库
 
 ---
 
-**⚠️ 免责声明**
+## 📧 联系方式
 
-本项目仅供学习交流使用，不提供任何投注建议。彩票有风险，投注需谨慎。请理性娱乐，远离赌博。
+- 项目主页: [GitHub](https://github.com/your-repo/caipiao)
+- 问题反馈: [Issues](https://github.com/your-repo/caipiao/issues)
+
+---
+
+<div align="center">
+
+**⭐ 如果这个项目对你有帮助，请给个Star支持一下！**
+
+Made with ❤️ by [Your Name]
+
+</div>
