@@ -122,15 +122,15 @@
 
 1. **下载应用**
    - 从 [Releases](https://github.com/your-repo/releases) 下载对应平台的安装包
-   - macOS (ARM): `彩票助手-macOS-arm64.app`
-   - macOS (Intel): `彩票助手-macOS-amd64.app`
+   - macOS (ARM): `彩票助手-macOS-arm64.zip`
+   - macOS (Intel): `彩票助手-macOS-amd64.zip`
    - Windows: `彩票助手-Windows-amd64.exe`
 
 2. **安装运行**
    ```bash
-   # macOS - 直接双击.app运行
-   # 或命令行运行
-   open 彩票助手-macOS-arm64.app
+   # macOS - 解压后双击运行
+   unzip 彩票助手-macOS-arm64.zip
+   open caipiao.app
    
    # Windows - 直接双击.exe运行
    ```

@@ -67,7 +67,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           mkdir -p release
-          cp "build/bin/caipiao.exe" "release/彩票助手-Windows-amd64.exe"
+          cp "build/bin/彩票助手.exe" "release/彩票助手-Windows-amd64.exe"
         shell: bash
 
       - name: Prepare artifacts (macOS)
@@ -75,9 +75,9 @@ jobs:
         run: |
           mkdir -p release
           if [ "${{ matrix.platform }}" == "darwin/amd64" ]; then
-            cp -r "build/bin/caipiao.app" "release/彩票助手-macOS-amd64.app"
+            ditto -c -k --keepParent "build/bin/caipiao.app" "release/彩票助手-macOS-amd64.zip"
           else
-            cp -r "build/bin/caipiao.app" "release/彩票助手-macOS-arm64.app"
+            ditto -c -k --keepParent "build/bin/caipiao.app" "release/彩票助手-macOS-arm64.zip"
           fi
 
       - name: Upload artifacts
