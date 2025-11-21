@@ -122,18 +122,17 @@
 
 1. **下载应用**
    - 从 [Releases](https://github.com/your-repo/releases) 下载对应平台的安装包
-   - macOS (ARM): `彩票助手-macOS-arm64.app.tar.gz`
-   - macOS (Intel): `彩票助手-macOS-amd64.app.tar.gz`
+   - macOS (ARM): `彩票助手-macOS-arm64.app`
+   - macOS (Intel): `彩票助手-macOS-amd64.app`
    - Windows: `彩票助手-Windows-amd64.exe`
 
 2. **安装运行**
    ```bash
-   # macOS
-   tar -xzf 彩票助手-macOS-arm64.app.tar.gz
-   open 彩票助手.app
+   # macOS - 直接双击.app运行
+   # 或命令行运行
+   open 彩票助手-macOS-arm64.app
    
-   # Windows
-   # 直接双击 .exe 文件
+   # Windows - 直接双击.exe运行
    ```
 
 3. **开始使用** 🎉
@@ -143,6 +142,7 @@
      - Windows: `%APPDATA%/caipiao/`
 
 ### 方式二: Web应用（推荐团队/服务器部署）
+
 
 #### 前置要求
 - Go 1.25+
